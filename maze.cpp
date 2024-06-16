@@ -1,95 +1,83 @@
 #include <iostream>
-#include <stack>
 #include <queue>
 #include <vector>
 
 using namespace std;
 
-struct position{
+bool isok(vector<vector<int>> &mapp, int x, int y){
+    if (mapp[x][y] == 1 || mapp[x][y] == 2){
+        return false;
+    } else {
+        return true;
+    }
+}
+
+struct point {
     int x;
     int y;
-    int dist;
+    int dc;
 };
 
-const int movx[4] = {1, 0, -1, 0};
-const int movy[4] = {0, 1, 0, -1};
-int N,M;
+int movx[4] = {0, 1, 0, -1};
+int movy[4] = {1, 0, -1, 0};
 
-bool isV(vector<vector<int>> &sq, int x, int y){
-    if(sq[y][x] == 1 || sq[y][x] == 2){
-        return false;
-    }
-    else return true;
-}
-
-int solve(vector<vector<int>>& sq, queue<position> s, int ec, int er){
-    priority_queue<int,vector<int>,greater<int>> cnt;
-    while (!s.empty()){
-        position now = s.front();
-        s.pop();
-        if(ec == now.y && er == now.x){
-            cnt.push(now.dist);
-            sq[now.y][now.x] = 0;
-        }
-        else {
-            for(int i = 0; i < 4;i++){
-                int nx = now.x + movx[i];
-                int ny = now.y + movy[i];
-                int nd = now.dist + 1;
-                if(nx < 0){
-                    nx = M-1;
-                }
-                else if(nx == M){
-                    nx = 0;
-                }
-                if(ny < 0){
-                    ny = N-1;
-                }
-                else if(ny == N){
-                    ny = 0;
-                }
-                if(isV(sq, nx,ny)){
-                    s.push({nx,ny,nd});
-                    sq[ny][nx] = 2;
-                }
-            }
-        }
-    }
-    if(cnt.empty())
-        return 0;
-    else {
-        return cnt.top();
-    }
-}
-
-int main(){
-    queue<position> s;
+int main() {
     int casenum;
     cin >> casenum;
-    char num;
-    while (casenum--){
-        int sc, sr, ec, er, mindist;
-        position current;
-        position end;
+    while(casenum--){
+        int N, M;
         cin >> N >> M;
-        vector<vector<int>> sq(N, vector<int>(M));
-        for(int i = 0; i< N;i++){
-            for(int j = 0; j<M; j++){
-                cin >> num;
-                sq[i][j] = num - '0';
+        vector<vector<int>> mapp(N, vector<int>(M));
+        for(int i = 0; i < N; i++){
+            for(int j = 0; j < M; j++){
+                char tmp;
+                cin >> tmp;
+                mapp[i][j] = tmp - '0';
             }
         }
+        int sc, sr, ec, er;
         cin >> sc >> sr >> ec >> er;
-        sq[sc][sr] = 2;
-        current.y = sc;
-        current.x = sr;
-        current.dist = 0;
-        s.push(current);
-        mindist = solve(sq,s, ec, er);
-        if(!mindist){
-            cout << "die" <<endl;
+        struct point now;
+        queue<point> q;
+        now.x = sc;
+        now.y = sr;
+        now.dc = 0;
+        q.push(now);
+        int flag = 0;
+        while (!q.empty()){
+            now = q.front();
+            q.pop();
+            if (now.x == ec && now.y == er){
+                cout << now.dc << endl;
+                flag = 1;
+                break;
+            } else {
+                for(int i = 0; i < 4; i++){
+                    point tmp = now;
+                    tmp.x += movx[i];
+                    tmp.y += movy[i];
+                    if(tmp.x >= N){
+                        tmp.x = 0;
+                    } else if(tmp.x < 0){
+                        tmp.x = N - 1;
+                    }
+                    if(tmp.y >= M){
+                        tmp.y = 0;
+                    } else if (tmp.y < 0){
+                        tmp.y = M - 1;
+                    }
+                    if (isok(mapp, tmp.x, tmp.y)){
+                        tmp.dc = now.dc + 1;
+                        q.push(tmp);
+                        mapp[tmp.x][tmp.y] = 2;
+                    }
+                }
+            }
         }
-        else cout << mindist <<endl;
+        if(!flag){
+            cout << "die" << endl;
+        }
     }
+
     return 0;
 }
