@@ -1,7 +1,7 @@
 #include <iostream>
 #include <queue>
-#include <vector>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -12,72 +12,60 @@ struct custom {
     int weight;
 };
 
-// 比时间
-struct compare1 {
-    bool operator()(const custom& a, const custom& b) const {
-        if(a.time != b.time) {
+struct compare_time{
+    bool operator()(const custom& a, const custom& b)const{
+        if(a.time != b.time){
             return a.time > b.time;
-        }
-        else {
-            if(a.level != b.level)
-                return a.level < b.level;
-            else
-                return a.weight > b.weight;
+        } else if (a.level != b.level){
+            return a.level < b.level;
+        } else {
+            return a.weight > b.weight;
         }
     }
 };
 
-// 比等级
-struct compare2 {
-    bool operator()(const custom& a, const custom& b) const {
-        if(a.level != b.level) {
+struct compare_level{
+    bool operator()(const custom& a, const custom& b)const{
+        if(a.level != b.level){
             return a.level < b.level;
-        }
-        else {
-            if(a.time != b.time)
-                return a.time > b.time;
-            else
-                return a.weight > b.weight;
+        } else if (a.time != b.time){
+            return a.time > b.time;
+        } else {
+            return a.weight > b.weight;
         }
     }
 };
 
 int main(){
-    long long n;
-    priority_queue<custom, vector<custom>, compare2> q;
-    priority_queue<custom, vector<custom>, compare1> wait;
-    long long now = 0;
-    long long close;
-    long long r = 0;
-    long long wait_time = 0;
-    cin >> n >> close;
-    custom customer;
-    for (long long i = 0; i < n;i++){
-        cin >> customer.time >> customer.level >> customer.name;
-        customer.weight = r;
-        r++;
-        wait.push(customer);
+    priority_queue<custom, vector<custom>, compare_time> customer;
+    priority_queue<custom, vector<custom>, compare_level> q;
+    int n;
+    int tmp_weight = 0;
+    int wait_time = 0;
+    // int now = 0;
+    cin >> n;
+    while (n--){
+        custom tmp;
+        cin >> tmp.time >> tmp.level >> tmp.name;
+        tmp.weight = tmp_weight;
+        tmp_weight++;
+        customer.push(tmp);
     }
-    while((!q.empty() || !wait.empty()) && now < close){
-        while ((wait.top().time+4) / 5 <=  wait_time && !wait.empty()){
-            if(now <= close){
-                q.push(wait.top());
-                wait.pop();
-            }
-            else {
-                return 0;
-            }
+    while (!customer.empty() || !q.empty()){
+        while (!customer.empty() && (customer.top().time + 4) / 5 <= wait_time){
+            q.push(customer.top());
+            customer.pop();
         }
-        if (!q.empty() && now < close){
+        if (!q.empty()){
             cout << q.top().name << endl;
-            now += 5;
-            wait_time ++;
+            wait_time++;
+            // now += 5;
             q.pop();
-        }
-        else {
-            now += 5;
+        } else {
             wait_time++;
         }
     }
+
+
     return 0;
 }
