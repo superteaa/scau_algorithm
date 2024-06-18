@@ -2,27 +2,25 @@
 
 using namespace std;
 
-int main() {
-    int n;
+int main(){
+    long long n;
     while (cin >> n && n){
-        long long y;
-        long long z;
-        for(long long x = n + 1; x <= 3 * n; x++){
-            if((n * x) % (x - n) == 0) {
-                y = (n * x) / (x - n);
-                if (y >= x)
-                    cout << "1/" << n << "=1/" << y << "+1/" << x << endl;
+        for(long long i = n + 1; i <= 3 * n; i++){
+            if (n * i % (i - n) == 0){
+                long long tmp = n * i / (i - n);
+                if(tmp >= i)
+                    cout << "1/" << n << "=" << "1/" << tmp << "+1/" << i << endl;
             }
-            for(long long q = (n * x) / (x - n) + 1; q <= 2 * (n * x) / (x - n); q++){
-                if((q * x * n) % (q * x - n * x - n * q) == 0){
-                    z = (q * x * n) / (q * x - n * x - n * q);
-                    if(z >= q && q >= x)
-                        cout << "1/" << n << "=1/" << z << "+1/" << q << "+1/" << x << endl;
+            for(long long j = n * i / (i - n) + 1; j <= 2 * (n * i / (i - n)) + 1; j++){
+                if((n * j * i) % (j * i - n * i - n * j) == 0){
+                    long long tmp2 = (n * j * i) / (j * i - n * i - n * j);
+                    if(tmp2 >= j && j >= i){
+                        cout << "1/" << n << "=" << "1/" << tmp2 << "+1/" << j << "+1/" << i << endl;
+                    }
+                        
                 }
             }
         }
         cout << endl;
     }
-
-    return 0;
 }
