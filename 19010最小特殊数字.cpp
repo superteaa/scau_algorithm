@@ -3,54 +3,53 @@
 
 using namespace std;
 
-typedef long long ll;
+int used[12] = {0};
+int enter[12] = {0};
+int ansarr[12] = {0};
+int n;
+int k;
+int ans = 0;
 
-ll n;
-ll k;
-ll num[12];
-ll book[12] = {0};
-ll ansa[12];
-ll ans = 0;
-
-ll getnum(){
-    ll sum = 0;
-    for (int i = 1; i <= n; i++){
-        sum = sum * 10 + ansa[i];
+int getans(){
+    int sum = 0;
+    for(int i = 0; i < n; i++){
+        sum = sum * 10 + ansarr[i];
     }
     return sum;
 }
 
-void dfs(ll step){
-    if(step == n + 1){
-        if(getnum() % k == 0 && !ans)
-            ans = getnum();
-        return;
-    }
-    for(int i = 1; i <= n; i++){
-        if(step == 1 && !num[i]){
-            continue;
+int dfs(int step){
+    if(step == n){
+        if(getans() % k == 0 && !ans){
+            ans = getans();
         }
-        if(!book[i]) {
-            book[i] = 1;
-            ansa[step] = num[i];
-            dfs(step + 1);
-            book[i] = 0; 
+    } else {
+        for(int i = 0; i < n; i++){
+            if((step == 0 && enter[i] == 0) || used[i]){
+                continue;
+            } else {
+                ansarr[step] = enter[i];
+                used[i] = 1;
+                dfs(step + 1);
+                used[i] = 0;
+            }
         }
     }
 }
 
 int main(){
     cin >> n >> k;
-    for(int i = 1; i <= n; i++){
-        cin >> num[i];
+    for(int i = 0; i < n; i++){
+        cin >> enter[i];
     }
-    if(n == 1 && !num[1]){
+    sort(enter, enter + n);
+    dfs(0);
+    if(ans)
+        cout << ans << endl; 
+    else if(n == 1 && enter[0] == 0){
         cout << "0" << endl;
-        return 0;
     }
-    sort(num + 1, num + 1 + n);
-    dfs(1);
-    if(!ans){
-        cout << "-1" << endl;
-    } else cout << ans << endl;
+    else {
+        cout << " -1" << endl;
+    }
 }
